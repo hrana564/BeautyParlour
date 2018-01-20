@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fashion - Beauty Parlour</title>
+
+    <style type="text/css">
+      .overlay{
+        opacity:0.8;
+        background-color:#ccc;
+        position:fixed;
+        width:100%;
+        height:100%;
+        top:0px;
+        left:0px;
+        z-index:1000;
+      }
+      /* The Close Button */
+      .close {
+        color: #000;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+    </style>
+
+    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/modern-business.css" rel="stylesheet">
+    <!-- <script type="text/javascript" src="./scripts/angular.min.js"></script> -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-touch.min.js"></script>
+    <script type="text/javascript" src="./scripts/main.js"></script>
+
+  </head>
+
+  <body ng-app="BeautyParlourApp" ng-controller="mainController">
+  <div style="display: block;text-align: center;" class="overlay" id="loadingPAGE">
+    <span style="top: 20%;" class="overlay">
+      <img src="/images/pageLoad.gif">
+    </span>
+  </div>
+  <div style="display: none;" id="mainPAGE">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <div style="overflow:auto; width: 86%">
+          <div style="float:left;">
+            <a class="navbar-brand" href="./index.html">Test Beauty Parlour</a>
+          </div>
+          <div style="float:right;">
+            <a href="./cart.html" style="float: right;font-weight: bold;font-size: 30px;color: #B8860B;"><img src="/images/cart.png" style="width: 30px; height: 30px;">{{CartProducts.length==0?'':CartProducts.length}}</a>            
+          </div>
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" style="padding: 0;">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/index.html">Home
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/Services.html">Services</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/AboutUSContactUS.html">About/Contact</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="pricing.html">Pricing</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="faq.html">FAQ</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <header>
+      <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+          <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+          <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+          <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner" role="listbox">
+          <!-- Slide One - Set the background image for this slide in the line below -->
+          <div class="carousel-item active" style="background-image: url('/images/home1.jpg')">
+            <div class="carousel-caption d-none d-md-block">
+              <h3 style="color: black;">Extreme Customer Satisfaction</h3>
+              <p style="color: black;">This is a description for the first slide.</p>
+            </div>
+          </div>
+          <!-- Slide Two - Set the background image for this slide in the line below -->
+          <div class="carousel-item" style="background-image: url('/images/home2.jpg')">
+            <div class="carousel-caption d-none d-md-block">
+              <h3 style="color: black;">All Variety of facilities available</h3>
+              <p style="color: black;">This is a description for the second slide.</p>
+            </div>
+          </div>
+          <!-- Slide Three - Set the background image for this slide in the line below -->
+          <div class="carousel-item" style="background-image: url('/images/home3.jpg')">
+            <div class="carousel-caption d-none d-md-block">
+              <h3 style="color: black;">Best Results</h3>
+              <p style="color: black;">This is a description for the third slide.</p>
+            </div>
+          </div>
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="container">
+      <div class="row">
+      <div class="alert alert-success col-md-12" ng-show="productAddedSuccess" style="margin-top: 10px;text-align: center;">
+        <div style="width: 80%;float: left;">
+          <strong>Success!</strong> Product was Successfully added to your Cart.
+        </div>
+        <div style="width: 20%;float: right;">
+          <span class="close" style="cursor: pointer;" ng-click="productAddedSuccess = false">&times;</span>
+        </div>
+      </div>
+    </div>
+      <h1 class="my-4" style="text-align: center;">Welcome to Home Beauty Parlour</h1>
+      <!-- /.row -->
+      <div class="row">
+        <div class="col-md-12">
+          <input class="form-control" style="width: 100%" placeholder="Search A Service" ng-model="filterValue" ng-change="RefreshProducts()">
+          <br />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 col-sm-6 portfolio-item" ng-repeat="SingleProduct in DispalyProducts">
+          <div class="acc_trigger btn btn-primary btn-lg btn-block" style="text-align: center;" ng-click="WindowUpDown(SingleProduct.CategoryID)">
+            <span style="float: left;" ng-if="screenWidth<=479">
+              <span id="leftDown{{SingleProduct.CategoryID}}" style=" display: {{screenWidth<=479?'block':'none'}}">&dArr;</span>
+              <span id="leftUp{{SingleProduct.CategoryID}}" style=" display: {{screenWidth<=479?'none':'block'}}">&uArr;</span>
+            </span>
+            <span>{{SingleProduct.CategoryName}}</span>
+            <span style="float: right;"  ng-if="screenWidth<=479">
+              <span id="rightDown{{SingleProduct.CategoryID}}" style=" display: {{screenWidth<=479?'block':'none'}}">&dArr;</span>
+              <span id="rightUp{{SingleProduct.CategoryID}}" style=" display: {{screenWidth<=479?'none':'block'}}">&uArr;</span>
+            </span>
+          </div>
+          <div id="container{{SingleProduct.CategoryID}}" style=" display: {{screenWidth<=479?'none':'block'}}">
+            <div class="block"> 
+              <div class="card h-100">
+                <a href="#"><img class="card-img-top img-responsive" ng-src="./images/Categories/{{SingleProduct.PhotoURL}}" alt="" style="width: 100%; height: 70%"></a>
+                <div class="card-body">
+                  <p class="card-text">
+                  <table style="width: 100%">
+                    <tbody>
+                      <tr ng-repeat="singleSubProduct in SingleProduct.SubProducts">
+                        <td>
+                          <input type="checkbox" ng-model="singleSubProduct.AddedToCart" ng-checked="singleSubProduct.AddedToCart" ng-change="CheckUncheckProduct(SingleProduct.CategoryID,singleSubProduct.ID,singleSubProduct.AddedToCart)">
+                        </td>
+                        <td>
+                          {{singleSubProduct.Name}}
+                        </td>
+                        <td style="font-weight: bold;">
+                          {{singleSubProduct.Price}}₹
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.row -->
+
+      <!-- Features Section -->
+      <div class="row">
+        <div class="col-md-12" style="text-align: center;">
+          <button class="btn btn-success" style="width: 200px" ng-click="AddToCart()">Update Cart</button>
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-lg-6">
+          <h2>Modern Business Features</h2>
+          <p>The Modern Business template by Start Bootstrap includes:</p>
+          <ul>
+            <li>
+              <strong>Bootstrap v4</strong>
+            </li>
+            <li>jQuery</li>
+            <li>Font Awesome</li>
+            <li>Working contact form with validation</li>
+            <li>Unstyled page elements for easy customization</li>
+          </ul>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis, omnis doloremque non cum id reprehenderit, quisquam totam aspernatur tempora minima unde aliquid ea culpa sunt. Reiciendis quia dolorum ducimus unde.</p>
+        </div>
+        <div class="col-lg-6">
+          <img class="img-fluid rounded" src="http://placehold.it/700x450" alt="">
+        </div>
+      </div>
+      <!-- /.row -->
+
+      <hr>
+
+      <!-- Call to Action Section -->
+      <div class="row mb-4">
+        <div class="col-md-8">
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias, expedita, saepe, vero rerum deleniti beatae veniam harum neque nemo praesentium cum alias asperiores commodi.</p>
+        </div>
+        <div class="col-md-4">
+          <a class="btn btn-lg btn-secondary btn-block" href="#">Call to Action</a>
+        </div>
+      </div>
+
+    </div>
+    <!-- /.container -->
+
+    <!-- Footer -->
+    <footer class="py-5 bg-dark">
+      <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; Your Website 2017</p>
+      </div>
+      <!-- /.container -->
+    </footer>
+  </div>
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript">
+      $('.row').on('click',function(e){
+        NavAutoClose(e);
+      });
+      $('footer').on('click',function(e){
+        NavAutoClose(e);
+      });
+      $('header').on('click',function(e){
+        NavAutoClose(e);
+      });
+      $('h1').on('click',function(e){
+        NavAutoClose(e);
+      });
+      function NavAutoClose(e) {
+        if($(".navbar-collapse").attr("class").includes("show")){
+          e.preventDefault();  $(".navbar-toggler").click();
+        }
+      }
+    </script>
+  </body>
+
+</html>

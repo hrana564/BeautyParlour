@@ -1,0 +1,77 @@
+/*!
+ * Start Bootstrap - Modern Business (https://startbootstrap.com/template-overviews/modern-business)
+ * Copyright 2013-2017 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-logomodern-business-nav/blob/master/LICENSE)
+ */
+
+body {
+  padding-top: 54px;
+}
+
+@media (min-width: 992px) {
+  body {
+    padding-top: 56px;
+  }
+}
+
+.carousel-item {
+  height: 65vh;
+  min-height: 300px;
+  background: no-repeat center center scroll;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.portfolio-item {
+  margin-bottom: 30px;
+}
+
+h2.acc_trigger {
+    padding: 0;    margin: 0 0 5px 0;
+    height: 46px;    line-height: 46px;
+    width: 100%;
+    font-size: 1.5em;
+    font-weight: normal;
+    float: left;
+margin-bottom:0;
+}
+h2.acc_trigger a {
+    color: #222;
+    text-decoration: none;
+    display: block;
+    padding: 0 0 0 50px;
+}
+h2.acc_trigger.active a {
+    color: #FF0000;
+    
+}
+h2.acc_trigger a:hover {
+    color: #999;
+}
+h2.acc_trigger a:active, h2.active {
+    color:#ED2224;
+}
+
+h2.active {background-position: left bottom;}
+.acc_container {
+    margin: 0 0 5px; padding: 0;
+    overflow: hidden;
+    font-size: 1.2em;
+    width: 100%;
+    clear: both;
+    background: #f0f0f0;
+    border: 1px solid #d6d6d6;
+    -webkit-border-bottom-right-radius: 5px;
+    -webkit-border-bottom-left-radius: 5px;
+    -moz-border-radius-bottomright: 5px;
+    -moz-border-radius-bottomleft: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+border-top:none;
+    
+}
+.acc_container .block {
+    padding: 20px;
+}
