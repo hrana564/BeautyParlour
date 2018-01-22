@@ -3,11 +3,11 @@ Date.prototype.addDays = function(days) {
     return this;
 };
 
-var app = angular.module("RanaSweetsApp", []); 
+var app = angular.module("BeautyParlourApp", []); 
 
 app.controller('cartController', ['$http','$scope', function($http,$scope){
 
-	$scope.CartProducts = typeof localStorage.getItem('RanaSweetsCart') == "string" &&  localStorage.getItem('RanaSweetsCart') != "undefined" ? JSON.parse(localStorage.getItem('RanaSweetsCart')) : [];
+	$scope.CartProducts = typeof localStorage.getItem('BeautyParloursCart') == "string" &&  localStorage.getItem('BeautyParloursCart') != "undefined" ? JSON.parse(localStorage.getItem('BeautyParloursCart')) : [];
 	$scope.FinalCartProducts = [];
 	$scope.AllProducts = [];
 	$scope.TempCartProducts = [];
@@ -18,7 +18,8 @@ app.controller('cartController', ['$http','$scope', function($http,$scope){
 		"Name":"",
 		"Mobile":"",
 		"Email":"",
-		"DateOfDelivery":"",
+		"DateOfService":"",
+		"TimeOfService":"",
 		"Address":"",
 		"TotalCost":0,
 		"DiscountPercentage":$scope.DiscountPercentage,
@@ -35,41 +36,37 @@ app.controller('cartController', ['$http','$scope', function($http,$scope){
 		document.getElementById("loadingPAGE").style.display="none";
 		document.getElementById("mainPAGE").style.display="block";
 		$scope.loading = false;
-		$scope.BindGrid = [];
 		for (var i = 0; i < response.data.length; i++) {
-			$scope.AllProducts.push({"ID":response.data[i].ID ,"Name":response.data[i].Name, "Description":response.data[i].Description, "Price":response.data[i].Price,"InStock":response.data[i].InStock,"Category":response.data[i].CategoryName,"PhotoURL":response.data[i].PhotoURL});
+			$scope.AllProducts.push({"CategoryID":response.data[i].CategoryID, "CategoryName":response.data[i].CategoryName, "PhotoURL":response.data[i].PhotoURL, "SubProducts":JSON.parse(response.data[i].SubProducts)});
 		}
-		var j =0;
 		for (var i = 0; i < $scope.CartProducts.length; i++) {
-			for (j= 0; j < $scope.AllProducts.length; j++) {
-				if($scope.AllProducts[j].InStock == 1){
-					if($scope.AllProducts[j].Name==$scope.CartProducts[i].Name){
-						$scope.FinalCartProducts.push({"Name":$scope.AllProducts[j].Name,"Quantity":$scope.CartProducts[i].Quantity,"Price":$scope.AllProducts[j].Price});
+			for (var j= 0; j < $scope.AllProducts.length; j++) {
+				for (var k = 0; k < $scope.AllProducts[j].SubProducts.length; k++) {
+					if($scope.AllProducts[j].SubProducts[k].ID == $scope.CartProducts[i]){
+						$scope.FinalCartProducts.push({"ProductID":$scope.CartProducts[i],"ProductName":$scope.AllProducts[j].SubProducts[k].Name,"CategoryName":$scope.AllProducts[j].CategoryName,"Price":$scope.AllProducts[j].SubProducts[k].Price});
+						$scope.TempCartProducts.push($scope.CartProducts[i]);
 						break;
 					}
 				}
-			}
-			if(j < $scope.AllProducts.length){
-				$scope.TempCartProducts.push($scope.CartProducts[i]);
 			}
 		}
 		if($scope.TempCartProducts.length!=$scope.CartProducts.length){
 			alert('Cart was updated due to unavailiblity of some products!');
 			$scope.CartProducts = angular.copy($scope.TempCartProducts);
-			localStorage.setItem('RanaSweetsCart', JSON.stringify($scope.CartProducts));
+			localStorage.setItem('BeautyParloursCart', JSON.stringify($scope.CartProducts));
 		}
 	});
 
 	$scope.add = function (a, b) {
-	    return (Number(b.Price)*Number(b.Quantity)) + a;
+	    return Number(b.Price) + a;
 	}
 
 	$scope.UpdateCartProduct = function () {
 		$scope.CartProducts = [];
 		for (var i = 0; i < $scope.FinalCartProducts.length; i++) {
-			$scope.CartProducts.push({"Name":$scope.FinalCartProducts[i].Name, "Quantity": $scope.FinalCartProducts[i].Quantity});
+			$scope.CartProducts.push($scope.FinalCartProducts[i].ProductID);
 		}
-		localStorage.setItem('RanaSweetsCart', JSON.stringify($scope.CartProducts));
+		localStorage.setItem('BeautyParloursCart', JSON.stringify($scope.CartProducts));
 	}
 
 	var currentDate = new Date();
@@ -79,6 +76,16 @@ app.controller('cartController', ['$http','$scope', function($http,$scope){
 		$scope.DeliveryDates.push({"text":tmpDate.toDateString(),"value":tmpDate.getFullYear()+"-"+(tmpDate.getMonth()+1)+"-"+tmpDate.getDate()});
 		if(i==0) $scope.PlaceOrder.DateOfDelivery = tmpDate.getFullYear()+"-"+(tmpDate.getMonth()+1)+"-"+tmpDate.getDate();
 	}
+
+	$scope.DeliveryTime = [];
+	for (var i = 0; i < 24; i++) {
+		if(i<12){
+			$scope.DeliveryTime.push({"text":(i<10?"0"+i.toString():i)+" am","value":(i<10?"0"+i.toString():i)+" am"});
+		} else {
+			$scope.DeliveryTime.push({"text":((i==12?12:i-12)<10?"0"+(i==12?12:i-12).toString():(i==12?12:i-12))+" pm","value":((i==12?12:i-12)<10?"0"+(i==12?12:i-12).toString():(i==12?12:i-12))+" pm"});
+		}
+	}
+	$scope.PlaceOrder.TimeOfDelivery = "09 am"
 	$scope.LoadFreshCaptcha = function () {
 		$http({
 			url: window.location.origin+'/ServerPHP/Client/GetCaptchaImage.php',
@@ -92,9 +99,10 @@ app.controller('cartController', ['$http','$scope', function($http,$scope){
 		$scope.PlaceOrder.ImgActualString = "";
 	}
 	$scope.LoadFreshCaptcha();
+
 	$scope.PlaceOrderFinal = function () {
 		if($scope.FinalCartProducts.length==0){
-			alert('Your Cart is Empty. Please add products to your cart!')
+			alert('Your Cart is Empty. Please add services to your cart!')
 			return;
 		}
 		if($scope.PlaceOrder.Name==""){
@@ -133,6 +141,7 @@ app.controller('cartController', ['$http','$scope', function($http,$scope){
 		data:{"OD":JSON.stringify($scope.PlaceOrder), "OC":JSON.stringify($scope.FinalCartProducts)}
 		})
 		.then(function(response) {
+			$scope.LoadFreshCaptcha();
 			if(response.data[0].Result=="InvalidCaptcha"){
 				$scope.LoadFreshCaptcha();
 				alert('Invalid Captcha Entered! Please Enter Correct Captcha.');
@@ -145,6 +154,7 @@ app.controller('cartController', ['$http','$scope', function($http,$scope){
 					"Mobile":"",
 					"Email":"",
 					"DateOfDelivery":"",
+					"TimeOfDelivery":"",
 					"Address":"",
 					"TotalCost":0,
 					"DiscountPercentage":$scope.DiscountPercentage,

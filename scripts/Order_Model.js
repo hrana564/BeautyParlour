@@ -1,0 +1,19 @@
+function RSOrder() {
+    this.ID = "",
+    this.Name = "",
+    this.Mobile = "",
+    this.Email = "",
+    this.DateOfService = "",
+    this.TimeOfService = "",
+    this.Address = "",
+    this.TotalCost = "",
+    this.DiscountPercentage = "",
+    this.FinalCost = "",
+    this.FinalCartProducts = [],
+    this.OrderProductCount = "",
+    this.IsServicePerformed = "",
+    this.Comments = "",
+    this.IsActive = "",
+    this.CreatedOn = "",
+    this.LastUpdatedOn = ""
+};

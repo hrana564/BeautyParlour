@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Fashion - Beauty Parlour</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="css/modern-business.css" rel="stylesheet">
+
+  <!-- <script type="text/javascript" src="./scripts/angular.min.js"></script> -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-touch.min.js"></script>
+  <script type="text/javascript" src="./scripts/cart.js"></script>
+
+
+</head>
+
+<body ng-app="BeautyParlourApp" ng-controller="cartController">
+  <div style="display: block;text-align: center;" class="overlay" id="loadingPAGE">
+    <span style="top: 20%;" class="overlay">
+      <img src="/images/pageLoad.gif">
+    </span>
+  </div>
+  <div style="display: none;" id="mainPAGE">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <div style="overflow:auto; width: 86%">
+          <div style="float:left;">
+            <a class="navbar-brand" href="./index.html">Test Beauty Parlour</a>
+          </div>
+          <div style="float:right;">
+            <a href="./cart.html" style="float: right;font-weight: bold;font-size: 30px;color: #B8860B;"><img src="/images/cart.png" style="width: 30px; height: 30px;">{{CartProducts.length==0?'':CartProducts.length}}</a>            
+          </div>
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" style="padding: 0;">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/index.html">Home
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/Services.html">Services</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/AboutUSContactUS.html">About/Contact</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="pricing.html">Pricing</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="faq.html">FAQ</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Page Content -->
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8">
+         <br />
+         <div class="row" ng-show="loading">
+          <div class="col-lg-12">
+            <div style="text-align: center;">
+              <IMG SRC="../images/loading.gif" ALT="loading..." style="width: 50px; height: 50px;margin-top: 100px" >
+              </div>
+            </div>
+          </div>
+          <div class="row" ng-show="!loading">
+            <div ng-if="FinalCartProducts.length == 0">
+              Sorry you have no servives in your cart!!!
+            </div>
+            <table class="table table-bordered table-hover table-condensed" ng-if="FinalCartProducts.length != 0">
+              <thead>
+                <tr style="background-color: #00BFFF">
+                  <th>Category</th>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="singleCartProduct in FinalCartProducts">
+                  <td>{{singleCartProduct.ProductName}}</td>
+                  <td>{{singleCartProduct.CategoryName}}</td>
+                  <td>{{singleCartProduct.Price}}</td>
+                  <td><button class="btn btn-danger" ng-click="FinalCartProducts.splice(FinalCartProducts.indexOf(singleCartProduct), 1);UpdateCartProduct();">X</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- /.col-lg-9 -->
+        <div class="col-lg-4"> &nbsp;
+          <div style="vertical-align: middle;">
+           <h3>Checkout</h3>
+           <span ng-if="PlaceOrder.DiscountPercentage>0">
+             <span style="color: darkblue;font-weight: bold;">Total Price &nbsp;&nbsp;&nbsp;&nbsp;: {{FinalCartProducts.reduce(add, 0)}}</span><br />
+             <span style="color: #FF4500;font-weight: bold;">Discount &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{PlaceOrder.DiscountPercentage}}%</span><br />
+           </span>
+           <span style="color: darkgreen;font-weight: bold;">Final Amount : {{FinalCartProducts.reduce(add, 0) * (1-(PlaceOrder.DiscountPercentage/100))}}</span> <br />
+           <hr>
+           <table cellpadding="10">
+             <tbody>
+               <tr>
+                <td>
+                  Name <span style="color: red;">*</span> :
+                </td>
+                <td>
+                  <input type="text" ng-model="PlaceOrder.Name">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Mobile <span style="color: red;">*</span> :
+                </td>
+                <td>
+                  <input type="text" ng-model="PlaceOrder.Mobile">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Email :
+                </td>
+                <td>
+                  <input type="text" ng-model="PlaceOrder.Email">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Date-Time <span style="color: red;">*</span> :
+                </td>
+                <td>
+                  <select ng-model="PlaceOrder.DateOfService">
+                    <option ng-repeat="singleDate in DeliveryDates" value="{{singleDate.value}}">{{singleDate.text}}</option>
+                  </select>
+                  <select ng-model="PlaceOrder.TimeOfService">
+                    <option ng-repeat="singleTime in DeliveryTime" value="{{singleTime.value}}">{{singleTime.text}}</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Address <span style="color: red;">*</span> :
+                </td>
+                <td>
+                  <textarea ng-model="PlaceOrder.Address"></textarea>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Please type <span style="color: red;">*</span> :
+                </td>
+                <td>
+                  <img ng-src="data:image/png;base64,{{ImgSrc}}" style="margin: 5px" /><a ng-click="LoadFreshCaptcha()" style="cursor: pointer;">Reload</a><br />
+                  <input type="text" ng-model="PlaceOrder.ImgActualString">
+                </td>
+              </tr>
+              <tr>
+               <td colspan="2" style="text-align: center; color: red;">
+                 Free Home Service in only for Pune.Rest locations will be discussed on Order Confirmation Call.*
+               </td>
+             </tr>
+              <tr>
+               <td colspan="2" style="text-align: center;">
+                 <button class="btn btn-success" ng-click="PlaceOrderFinal()">Place Order</button>
+               </td>
+             </tr>
+           </tbody>
+         </table>
+       </div>
+     </div>
+   </div>
+   <!-- /.row -->
+
+ </div>
+ <!-- /.container -->
+
+ <!-- Footer -->
+ <footer class="py-5 bg-dark">
+  <div class="container">
+    <p class="m-0 text-center text-white">Copyright &copy; Rana Sweets 2017. Developed by Ketan Rana <a href="tel:77 9840 1344" style="color: #5F9EA0;font-size: 1.10rem">☏ 77-9840-1344</a></p>
+  </div>
+  <!-- /.container -->
+</footer>
+
+<!-- Bootstrap core JavaScript -->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+  $('.row').on('click',function(e){
+    if($(".navbar-collapse").attr("class").includes("show")){
+      e.preventDefault();  $(".navbar-toggler").click();
+    }
+  });
+</script>
+</div>
+</body>
+
+</html>

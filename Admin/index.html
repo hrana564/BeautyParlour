@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Admin - Rana Sweets</title>
+    <!-- Bootstrap core CSS -->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+
+        .login-page {
+          width: 360px;
+          padding: 8% 0 0 0;
+          margin: auto;
+        }
+        .form {
+          position: relative;
+          z-index: 1;
+          background: #FFFFFF;
+          max-width: 360px;
+          margin: 0 auto 100px;
+          padding: 45px;
+          text-align: center;
+          box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+        }
+        .form .LoginControls {
+          font-family: "Roboto", sans-serif;
+          outline: 0;
+          background: #f2f2f2;
+          width: 100%;
+          border: 0;
+          margin: 0 0 15px;
+          padding: 15px;
+          box-sizing: border-box;
+          font-size: 14px;
+        }
+        .form button {
+          font-family: "Roboto", sans-serif;
+          text-transform: uppercase;
+          outline: 0;
+          background: #4CAF50;
+          width: 100%;
+          border: 0;
+          padding: 15px;
+          color: #FFFFFF;
+          font-size: 14px;
+          -webkit-transition: all 0.3 ease;
+          transition: all 0.3 ease;
+          cursor: pointer;
+        }
+        .form button:hover,.form button:active,.form button:focus {
+          background: #43A047;
+        }
+        .form .register-form {
+          display: none;
+        }
+        body {
+          background: #76b852; /* fallback for old browsers */
+          background: -webkit-linear-gradient(right, #76b852, #8DC26F);
+          background: -moz-linear-gradient(right, #76b852, #8DC26F);
+          background: -o-linear-gradient(right, #76b852, #8DC26F);
+          background: linear-gradient(to left, #76b852, #8DC26F);
+          font-family: "Roboto", sans-serif;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;      
+        }
+    </style>
+
+    <!-- Custom styles for this template -->
+    <link href="../css/shop-homepage.css" rel="stylesheet">
+
+     <!-- <script type="text/javascript" src="./scripts/angular.min.js"></script> -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-touch.min.js"></script>
+    
+    <script type="text/javascript" src="../scripts/AngularGrid_Utility.js"></script>
+    <script type="text/javascript" src="../scripts/Amain.js"></script>
+
+  </head>
+
+  <body>
+    <div ng-app="GheeAdminApp" ng-controller="mainController">
+        <div>
+
+            <h1 style="text-align: center;">Admin Panel for Rana Sweets</h1>
+            <div class="login-page">
+                <div class="form">
+                    <form class="login-form">
+                      <input type="text" placeholder="username" ng-model="username" class="LoginControls" />
+                        <p style="color: red;" ng-show="invalidUsername">Username is mandatory</p>
+                      <input type="password" placeholder="password" ng-model="password" class="LoginControls" />
+                        <p style="color: red;" ng-show="invalidPassword">Password is mandatory</p>
+                      <button ng-click="ValidateAndLogin()">login</button>
+                        <p style="color: red;" ng-show="invalidUP">Invalid Username or Password!</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+  </body>
+
+</html>

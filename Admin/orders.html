@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Admin Panel</title>
+  <!-- Bootstrap core CSS -->
+  <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom styles for this template -->
+    <link href="/css/shop-homepage.css" rel="stylesheet">
+  <style type="text/css">
+   .sortorder:after {
+    content: '\25b2';
+  }
+
+  .sortorder.reverse:after {
+    content: '\25bc';
+  }
+
+  ul.pagination {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+  }
+
+  ul.pagination li {
+    display: inline;
+  }
+
+  ul.pagination li a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+  }
+
+  ul.pagination li a.active {
+    background-color: #337AC6;
+    color: white;
+  }
+
+  ul.pagination li a:hover:not(.active) {
+    background-color: #ddd;
+  }
+  /* The Modal (background) */
+  .modal {
+    padding-top: 56px;
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+
+  /* Modal Content/Box */
+  .modal-content {
+    background-color: #fefefe;
+    margin: 30px 10% 11% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+  }
+
+  /* The Close Button */
+  .close {
+    color: #000;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  a.hovera span.hoverspan {display: none; position: absolute; color: #fff; background: #000; padding: 5px;}
+  a.hovera {position: relative;}
+  a.hovera:hover span.hoverspan {display: block; text-align: center;z-index: 1055}
+
+</style>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-touch.min.js"></script>
+
+<script type="text/javascript" src="../scripts/Order_Model.js"></script>
+<script type="text/javascript" src="../scripts/AngularGrid_Utility.js"></script>
+<script type="text/javascript" src="../scripts/Aorders.js"></script>
+
+</head>
+
+<body ng-app="RanaSweetsApp" ng-controller="orderController">
+<!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <div style="overflow:auto; width: 80%">
+        <div style="float:left;">
+          <a class="navbar-brand" href="./index.html">Test Beauty Parlour</a>
+        </div>
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="dropdown">
+              <a href="#" class="nav-link" data-toggle="dropdown" style="width: 120%">Master &#8615;</a>
+              <ul class="dropdown-menu" style="background-color: #343a40!important">
+                <li ><a class="nav-link" href="./products.html">Products</a></li>
+                <li ><a class="nav-link" href="./faqs.html">FAQs</a></li>
+              </ul>
+            </li>
+            <li class="dropdown nav-item active"> 
+              <a href="#" class="nav-link" data-toggle="dropdown" style="width: 120%">Orders &#8615;</a>
+              <ul class="dropdown-menu" style="background-color: #343a40!important">
+                <li ><a class="nav-link" href="./orders.html?Mode=1">All</a></li>
+                <li ><a class="nav-link" href="./orders.html?Mode=2">Un Serviced</a></li>
+                <li ><a class="nav-link" href="./orders.html?Mode=3">Danger</a></li>
+                <li ><a class="nav-link" href="./orders.html?Mode=4">Serviced</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" ng-click="Logout()">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Page Content -->
+    <div style="width: 100%; padding: 15px !important" >
+     <br />
+      <div class="row">
+        <div class="col-lg-3">
+          Show <select ng-model="PageSize" ng-change="loadGrid(1)">
+          <option ng-selected="true" ng-value="10">10</option>
+          <option ng-value="20">20</option>
+          <option ng-value="50">50</option>
+        </select> entries
+      </div>
+      <div class="col-lg-6">
+        <input type="radio" ng-model="FilterMode" value="1" ng-change="FilterChange()">All &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="radio" ng-model="FilterMode" value="2" ng-change="FilterChange()">Un Delivered &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="radio" ng-model="FilterMode" value="3" ng-change="FilterChange()">Danger &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="radio" ng-model="FilterMode" value="4" ng-change="FilterChange()">Delivered &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </div>
+      <div class="col-lg-3" style="text-align: right;">
+        <input type="text" placeholder="Search" ng-model="search">
+      </div>
+    </div>
+    <div class="row" ng-show="loading">
+      <div class="col-lg-12">
+      <div style="text-align: center;">
+        <IMG SRC="../images/loading.gif" ALT="loading..." style="width: 50px; height: 50px;margin-top: 100px" >
+      </div>
+      </div>
+    </div>
+    <div class="row" ng-show="!loading">
+      <div class="col-lg-12">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>
+                <a style=" cursor: pointer" ng-click="sortBy('Name')">Name</a>
+                <span class="sortorder" ng-show="propertyName === 'Name'" ng-class="{reverse: reverse}"></span>
+              </th>
+              <th>
+                <a style=" cursor: pointer" ng-click="sortBy('Mobile')">Mobile</a>
+                <span class="sortorder" ng-show="propertyName === 'Mobile'" ng-class="{reverse: reverse}"></span>
+              </th>
+              <th>
+                <a style=" cursor: pointer" ng-click="sortBy('Email')">Email</a>
+                <span class="sortorder" ng-show="propertyName === 'Email'" ng-class="{reverse: reverse}"></span>
+              </th>
+              <th>
+                <a style=" cursor: pointer" ng-click="sortBy('DateOfService')">Date-Time Of Service</a>
+                <span class="sortorder" ng-show="propertyName === 'DateOfService'" ng-class="{reverse: reverse}"></span>
+              </th>
+              <th>
+                <a style=" cursor: pointer" ng-click="sortBy('Address')">Address</a>
+                <span class="sortorder" ng-show="propertyName === 'Address'" ng-class="{reverse: reverse}"></span>
+              </th>
+              <th>
+                <a style=" cursor: pointer" ng-click="sortBy('FinalCost')">Final Cost</a>
+                <span class="sortorder" ng-show="propertyName === 'FinalCost'" ng-class="{reverse: reverse}"></span>
+              </th>
+              <th>
+                <a style=" cursor: pointer" ng-click="sortBy('OrderProductCount')">Order Product Count</a>
+                <span class="sortorder" ng-show="propertyName === 'OrderProductCount'" ng-class="{reverse: reverse}"></span>
+              </th>
+              <th>
+                <a style=" cursor: pointer" ng-click="sortBy('IsDelivered')">Is Delivered</a>
+                <span class="sortorder" ng-show="propertyName === 'IsDelivered'" ng-class="{reverse: reverse}"></span>
+              </th>
+              <th>
+                <a style=" cursor: pointer" ng-click="sortBy('Comments')">Comments</a>
+                <span class="sortorder" ng-show="propertyName === 'Comments'" ng-class="{reverse: reverse}"></span>
+              </th>
+              <th>
+                <a style=" cursor: pointer" ng-click="sortBy('IsActive')">Is Active</a>
+                <span class="sortorder" ng-show="propertyName === 'IsActive'" ng-class="{reverse: reverse}"></span>
+              </th>
+              <th>
+                <a style=" cursor: pointer" ng-click="sortBy('CreatedOn')">Created On</a>
+                <span class="sortorder" ng-show="propertyName === 'CreatedOn'" ng-class="{reverse: reverse}"></span>
+              </th>
+              <th>
+                <a style=" cursor: pointer" ng-click="sortBy('LastUpdatedOn')">Last Updated On</a>
+                <span class="sortorder" ng-show="propertyName === 'LastUpdatedOn'" ng-class="{reverse: reverse}"></span>
+              </th>
+              <th>
+                Edit
+              </th>
+              <th>
+                Delete
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="singleOrder in BindGrid | orderBy:propertyName:reverse | filter : search">
+              <td>{{singleOrder.Name}}</td>
+              <td>{{singleOrder.Mobile}}</td>
+              <td>{{singleOrder.Email}}</td>
+              <td>{{singleOrder.DateOfService}} : {{singleOrder.TimeOfService}}</td>
+              <td><a href="#" class="hovera">View<span class="hoverspan" style="width: 300px;z-index: 5555">{{singleOrder.Address}}</span></a></td>
+              <td><a href="#" class="hovera">{{singleOrder.FinalCost}}<span class="hoverspan" style="width: 100px;z-index: 5555">{{singleOrder.TotalCost}}<br />-{{(singleOrder.DiscountPercentage/100) * singleOrder.TotalCost}}</span></a></td>
+              <td>{{singleOrder.OrderProductCount}}</td>
+              <td>{{singleOrder.IsDelivered==1?'YES':'NO'}}</td>
+              <td>{{singleOrder.Comments}}</td>
+              <td>{{singleOrder.IsActive==1?'YES':'NO'}}</td>
+              <td>{{singleOrder.CreatedOn}}</td>
+              <td>{{singleOrder.LastUpdatedOn}}</td>
+              <td><button class="btn btn-primary" ng-click='InitEditNewProduct(singleOrder)'>  &#9998;</button></td>
+              <td><button class="btn btn-danger" ng-click='DeleteOrder(singleOrder.ID)'> X </button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-lg-3" style="margin-top:30px">
+        <div class="form-group">
+          {{PagingMessage}}
+        </div>
+      </div>
+      <div class="pagination pagination-sm no-margin pull-right">
+        <ul class="pagination disabled">
+          <li>
+            <a ng-click="prevPage()">« Prev</a>
+          </li>
+        </ul>
+        <ul class="pagination  " ng-repeat="n in Utility.range(1,VirtualItemCount ,PageSize,1)">
+          <li><a id="P{{n}}" ng-class="{active: n == currentPage}" ng-click="loadGrid(n)">{{n}}</a></li>
+        </ul>
+        <ul class="pagination">
+          <li>
+            <a ng-click="nextPage()">Next »</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+
+      <!-- Modal content -->
+      <div class="modal-content">
+        <div style="text-align: right;">
+          <span class="close">&times;</span>
+        </div>
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+              Name : <input type="text" ng-model="AlterProduct.Name">
+            </div>
+            <div class="col-md-6">
+              Mobile : <input type="text" ng-model="AlterProduct.Mobile">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              Email : <input type="text" ng-model="AlterProduct.Email">
+            </div>
+            <div class="col-md-6">
+              Delivery Date : 
+              <select ng-model="AlterProduct.DateOfDelivery">
+                <option ng-repeat="singleDate in DeliveryDates" value="{{singleDate.value}}">{{singleDate.text}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Total Cost : {{AlterProduct.TotalCost}}
+            </div>
+            <div class="col-md-4">
+              Discount Percentage : <input type="text" ng-model="AlterProduct.DiscountPercentage" ng-change="DiscountPercentChange()">
+            </div>
+            <div class="col-md-4">
+              Final Cost : <input type="text" ng-model="AlterProduct.FinalCost" ng-change="FinalCostChange()">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              Address : <textarea ng-model="AlterProduct.Address" rows="3" cols="50"></textarea>
+            </div>
+            <div class="col-md-6">
+              Comments : <textarea ng-model="AlterProduct.Comments" rows="3" cols="50"></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              IsDelivered : 
+              <input type="radio" ng-model="AlterProduct.IsDelivered" value="1">YES
+              <input type="radio" ng-model="AlterProduct.IsDelivered" value="0">NO
+            </div>
+            <div class="col-md-6">
+              In Active:
+              <input type="radio" ng-model="AlterProduct.IsActive" value="1">YES
+              <input type="radio" ng-model="AlterProduct.IsActive" value="0">NO
+            </div>
+          </div><br />
+          <div class="row">
+            <div class="col-md-12">
+              <table class="table table-bordered">
+                <thead>
+                  <tr> 
+                    <td>Product Name</td>
+                    <td>QTY Ordered</td>
+                    <td>Price Per KG</td>
+                    <td>Total Cost</td>
+                    <td>Created On</td>
+                    <td>Last Updated On</td>
+                    <td>Delete</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="singleSubProduct in AlterProduct.FinalCartProducts">
+                    <td>{{singleSubProduct.Name}}</td>
+                    <td><input ng-model="singleSubProduct.Quantity" ng-change="SubProductQuantityChange(singleSubProduct.Name)"></td>
+                    <td><input ng-model="singleSubProduct.PricePerKG" ng-change="SubProductPriceChange(singleSubProduct.Name)"></td>
+                    <td><input ng-model="singleSubProduct.TotalCost" ng-change="SubProductTotalCostChange(singleSubProduct.Name)"></td>
+                    <td>{{singleSubProduct.CreatedOn}}</td>
+                    <td>{{singleSubProduct.LastUpdatedOn}}</td>
+                    <td><button class="btn btn-danger btn-sm" ng-click="DeleteSubProduct(singleSubProduct.Name)">Delete</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <button class="btn btn-success btn-sm" ng-click="UpdateOrder()">Save</button>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Bootstrap core JavaScript -->
+    <script src="../vendor/jquery/jquery.min.js"></script>
+    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript">
+      $('.row').on('click',function(e){
+        if($(".navbar-collapse").attr("class").includes("show")){
+          e.preventDefault();  $(".navbar-toggler").click();
+        }
+      });
+    </script>
+  <script type="text/javascript">
+    // Get the modal
+  var modal = document.getElementById('myModal');
+
+  // Get the <span> element that closes the modal
+  var span = document.getElementsByClassName("close")[0];
+
+  // When the user clicks on <span> (x), close the modal
+  span.onclick = function() {
+      modal.style.display = "none";
+  }
+
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          modal.style.display = "none";
+      }
+  }
+  </script>
+</body>
+</html>

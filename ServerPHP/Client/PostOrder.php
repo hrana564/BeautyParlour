@@ -20,8 +20,7 @@ try {
 		/* set autocommit to off */
 		mysqli_begin_transaction($conn, MYSQLI_TRANS_START_READ_WRITE);
 
-		$sql = "INSERT INTO `orders`(`Name`, `Mobile`, `Email`, `DateOfDelivery`, `Address`, `TotalCost`, `DiscountPercentage`, `FinalCost`, `IsDelivered`, `Comments`, `IsActive`, `CreatedOn`, `LastUpdatedOn`) value('$OCObj->Name','$OCObj->Mobile','$OCObj->Email','$OCObj->DateOfDelivery','$OCObj->Address',$OCObj->TotalCost,$OCObj->DiscountPercentage,$OCObj->FinalCost,0,'',1,NOW(),NOW())";
-
+		$sql = "INSERT INTO `orders`(`Name`, `Mobile`, `Email`, `DateOfService`, `TimeOfService`, `Address`, `TotalCost`, `DiscountPercentage`, `FinalCost`, `IsServicePerformed`, `Comments`, `IsActive`, `CreatedOn`, `LastUpdatedOn`) value('$OCObj->Name','$OCObj->Mobile','$OCObj->Email','$OCObj->DateOfService','$OCObj->TimeOfService','$OCObj->Address',$OCObj->TotalCost,$OCObj->DiscountPercentage,$OCObj->FinalCost,0,'',1,NOW(),NOW())";
 		$result = mysqli_query($conn,$sql);
 		if(! ($result === True)){
 			 throw new Exception("Cannot Place Order!!!");
@@ -33,7 +32,7 @@ try {
 		}
 
 		foreach ($OCArray as $value) {
-			$sql = "INSERT INTO `orderproducts`(`OrderID`, `Name`, `PricePerKG`, `TotalCost`, `Quantity`, `CreatedOn`, `LastUpdatedOn`) select $NewOrderID,'$value->Name',(SELECT `Price` FROM `products` where `Name`='$value->Name'),(SELECT `Price` * $value->Quantity FROM `products` where `Name`='$value->Name'),'$value->Quantity',NOW(),NOW()";
+			$sql = "INSERT INTO `orderproducts`(`OrderID`, `CategoryName`, `ProductName`, `TotalCost`, `CreatedOn`, `LastUpdatedOn`) select $NewOrderID,'$value->CategoryName','$value->ProductName',(SELECT `Price` FROM `products` where `ID`='$value->ProductID'),NOW(),NOW()";
 			$result = mysqli_query($conn,$sql);
 			if(! ($result === True)){
 				throw new Exception("Cannot Place Sub Order!!!");
