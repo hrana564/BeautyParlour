@@ -236,7 +236,7 @@
               <td><a href="#" class="hovera">View<span class="hoverspan" style="width: 300px;z-index: 5555">{{singleOrder.Address}}</span></a></td>
               <td><a href="#" class="hovera">{{singleOrder.FinalCost}}<span class="hoverspan" style="width: 100px;z-index: 5555">{{singleOrder.TotalCost}}<br />-{{(singleOrder.DiscountPercentage/100) * singleOrder.TotalCost}}</span></a></td>
               <td>{{singleOrder.OrderProductCount}}</td>
-              <td>{{singleOrder.IsDelivered==1?'YES':'NO'}}</td>
+              <td>{{singleOrder.IsServicePerformed==1?'YES':'NO'}}</td>
               <td>{{singleOrder.Comments}}</td>
               <td>{{singleOrder.IsActive==1?'YES':'NO'}}</td>
               <td>{{singleOrder.CreatedOn}}</td>
@@ -292,9 +292,12 @@
               Email : <input type="text" ng-model="AlterProduct.Email">
             </div>
             <div class="col-md-6">
-              Delivery Date : 
-              <select ng-model="AlterProduct.DateOfDelivery">
+              Date-Time of Service : 
+              <select ng-model="AlterProduct.DateOfService">
                 <option ng-repeat="singleDate in DeliveryDates" value="{{singleDate.value}}">{{singleDate.text}}</option>
+              </select>
+              <select ng-model="AlterProduct.TimeOfService">
+                <option ng-repeat="singleTime in DeliveryTime" value="{{singleTime.value}}">{{singleTime.text}}</option>
               </select>
             </div>
           </div>
@@ -319,9 +322,9 @@
           </div>
           <div class="row">
             <div class="col-md-6">
-              IsDelivered : 
-              <input type="radio" ng-model="AlterProduct.IsDelivered" value="1">YES
-              <input type="radio" ng-model="AlterProduct.IsDelivered" value="0">NO
+              IsServiced : 
+              <input type="radio" ng-model="AlterProduct.IsServicePerformed" value="1">YES
+              <input type="radio" ng-model="AlterProduct.IsServicePerformed" value="0">NO
             </div>
             <div class="col-md-6">
               In Active:
@@ -334,10 +337,9 @@
               <table class="table table-bordered">
                 <thead>
                   <tr> 
+                    <td>Category Name</td>
                     <td>Product Name</td>
-                    <td>QTY Ordered</td>
-                    <td>Price Per KG</td>
-                    <td>Total Cost</td>
+                    <td>Price</td>
                     <td>Created On</td>
                     <td>Last Updated On</td>
                     <td>Delete</td>
@@ -345,13 +347,12 @@
                 </thead>
                 <tbody>
                   <tr ng-repeat="singleSubProduct in AlterProduct.FinalCartProducts">
-                    <td>{{singleSubProduct.Name}}</td>
-                    <td><input ng-model="singleSubProduct.Quantity" ng-change="SubProductQuantityChange(singleSubProduct.Name)"></td>
-                    <td><input ng-model="singleSubProduct.PricePerKG" ng-change="SubProductPriceChange(singleSubProduct.Name)"></td>
-                    <td><input ng-model="singleSubProduct.TotalCost" ng-change="SubProductTotalCostChange(singleSubProduct.Name)"></td>
+                    <td>{{singleSubProduct.CategoryName}}</td>
+                    <td>{{singleSubProduct.ProductName}}</td>
+                    <td><input ng-model="singleSubProduct.TotalCost" ng-change="UpdateSubProductsCosts()"></td>
                     <td>{{singleSubProduct.CreatedOn}}</td>
                     <td>{{singleSubProduct.LastUpdatedOn}}</td>
-                    <td><button class="btn btn-danger btn-sm" ng-click="DeleteSubProduct(singleSubProduct.Name)">Delete</button></td>
+                    <td><button class="btn btn-danger btn-sm" ng-click="DeleteSubProduct(singleSubProduct.ID)">Delete</button></td>
                   </tr>
                 </tbody>
               </table>

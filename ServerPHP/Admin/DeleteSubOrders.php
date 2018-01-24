@@ -5,7 +5,7 @@ require_once '../Utils/PHPFunctions.php';
 $rest_json = file_get_contents("php://input");
 $_POST = json_decode($rest_json, true);
 $ID = $_POST['ID'];
-$TotalCost  = $_POST['TotalCost'];
+$ProductIDToDelete  = $_POST['ProductIDToDelete'];
 $Token = $_POST['Token'];
 
 $IsAuthenticated = ValidateToken($Token,$conn);
@@ -14,7 +14,7 @@ if($IsAuthenticated  != 1){
 	exit();
 }
 
-$sql = "Update `orderproducts` set `TotalCost`=$TotalCost, `LastUpdatedOn`=NOW() where `ID`=$ID";
+$sql = "delete from `orderproducts` where `OrderID`=$ID and `ID` in ($ProductIDToDelete)";
 
 $result = mysqli_query($conn, $sql);
 if ($result===True) {

@@ -62,6 +62,7 @@ app.controller('orderController', ['$http','$scope','UtilityObject', function($h
 }
 
 $scope.AlterProduct = new RSOrder();
+$scope.productsToDelete = [];
 
 function Error(Message) {
     alert(Message);
@@ -90,7 +91,7 @@ function Error(Message) {
                     "FinalCost":response.data[i].FinalCost,
                     "FinalCartProducts":JSON.parse(response.data[i].SubOrderProducts),
                     "OrderProductCount":(JSON.parse(response.data[i].SubOrderProducts)).length,
-                    "IsDelivered":response.data[i].IsDelivered,
+                    "IsServicePerformed":response.data[i].IsServicePerformed,
                     "Comments":response.data[i].Comments,
                     "IsActive":response.data[i].IsActive,
                     "CreatedOn":response.data[i].CreatedOn,
@@ -149,20 +150,30 @@ function Error(Message) {
         }
     };
 
+    $scope.DeliveryTime = [];
+    for (var i = 0; i < 24; i++) {
+        if(i<12){
+            $scope.DeliveryTime.push({"text":(i<10?"0"+i.toString():i)+" am","value":(i<10?"0"+i.toString():i)+" am"});
+        } else {
+            $scope.DeliveryTime.push({"text":((i==12?12:i-12)<10?"0"+(i==12?12:i-12).toString():(i==12?12:i-12))+" pm","value":((i==12?12:i-12)<10?"0"+(i==12?12:i-12).toString():(i==12?12:i-12))+" pm"});
+        }
+    }
+
     $scope.InitEditNewProduct =function (currentProduct) {
         $scope.AlterProduct = angular.copy(currentProduct);
-    // Get the modal
-    var modal = document.getElementById('myModal');
-    // Get the button that opens the modal
-    var btn = document.getElementById("myBtn");
-    modal.style.display = "block";
-};
+        // Get the modal
+        var modal = document.getElementById('myModal');
+        // Get the button that opens the modal
+        var btn = document.getElementById("myBtn");
+        modal.style.display = "block";
+    };
 
 $scope.UpdateOrder = function () {
     $scope.BeautyParloursAT = typeof localStorage.getItem('BeautyParloursAT') == "string" &&  localStorage.getItem('BeautyParloursAT') != "undefined" ? localStorage.getItem('BeautyParloursAT') : "";
     $scope.AlterProduct.Token=$scope.BeautyParloursAT;
     $scope.AJAXTotalRequests = $scope.AlterProduct.FinalCartProducts.length;
     $scope.AJAXCompletedRequests = 0;
+    $scope.loading = true;
     $http({
         url: window.location.origin+'/ServerPHP/Admin/UpdateOrders.php',
         method: "POST",
@@ -170,7 +181,7 @@ $scope.UpdateOrder = function () {
           'Content-Type': 'multipart/form-data'
       },
       data:$scope.AlterProduct
-  })
+    })
     .then(function(response) {
         if(response.data[0].Result=="-1"){
             localStorage.setItem('BeautyParloursAT','');
@@ -193,7 +204,25 @@ $scope.UpdateOrder = function () {
                 }
                 $scope.AJAXCompletedRequests++;
                 if($scope.AJAXTotalRequests == $scope.AJAXCompletedRequests){
-                    $scope.loadGrid(1);
+                    if($scope.productsToDelete.length>0){
+                        $http({
+                        url: window.location.origin+'/ServerPHP/Admin/DeleteSubOrders.php',
+                        method: "POST",
+                        headers: {
+                          'Content-Type': 'multipart/form-data'
+                      },
+                          data:{"ID":$scope.AlterProduct.ID,"ProductIDToDelete":$scope.productsToDelete.join(','),"Token":$scope.BeautyParloursAT}
+                        }).then(function(response) {
+                             if(response.data[0].Result=="True"){
+                                $scope.loadGrid(1);
+                            } else {
+                                alert('Error occoured while deleting Sub-Order! Contact Admin immediately.');
+                                $scope.loadGrid(1);
+                            }
+                        });
+                    } else {
+                        $scope.loadGrid(1);
+                    }
                 }
                 if(response.data[0].Result=="True"){
 
@@ -203,8 +232,6 @@ $scope.UpdateOrder = function () {
             });
           }
           alert('Data Updated Successfully!');
-          $scope.loadGrid(1);
-          $scope.AlterProduct = new RSOrder();
           document.getElementById('myModal').style.display = "none";
       } else {
         alert('Data Updation Failed!');
@@ -221,36 +248,10 @@ $scope.UpdateSubProductsCosts = function () {
     $scope.TotalCostChange();
 };
 
-$scope.SubProductQuantityChange= function (productName) {
+$scope.DeleteSubProduct = function (ID) {
+    $scope.productsToDelete.push(ID);
     for (var i = 0; i < $scope.AlterProduct.FinalCartProducts.length; i++) {
-        if($scope.AlterProduct.FinalCartProducts[i].Name==productName){
-            $scope.AlterProduct.FinalCartProducts[i].TotalCost = Math.round($scope.AlterProduct.FinalCartProducts[i].Quantity * $scope.AlterProduct.FinalCartProducts[i].PricePerKG);
-        }
-    }
-    $scope.UpdateSubProductsCosts();
-}
-
-$scope.SubProductPriceChange= function (productName) {
-    for (var i = 0; i < $scope.AlterProduct.FinalCartProducts.length; i++) {
-        if($scope.AlterProduct.FinalCartProducts[i].Name==productName){
-            $scope.AlterProduct.FinalCartProducts[i].TotalCost = Math.round($scope.AlterProduct.FinalCartProducts[i].Quantity * $scope.AlterProduct.FinalCartProducts[i].PricePerKG);
-        }
-    }
-    $scope.UpdateSubProductsCosts();
-}
-
-$scope.SubProductTotalCostChange= function (productName) {
-    for (var i = 0; i < $scope.AlterProduct.FinalCartProducts.length; i++) {
-        if($scope.AlterProduct.FinalCartProducts[i].Name==productName){
-            $scope.AlterProduct.FinalCartProducts[i].PricePerKG = Math.round($scope.AlterProduct.FinalCartProducts[i].TotalCost / $scope.AlterProduct.FinalCartProducts[i].Quantity);
-        }
-    }
-    $scope.UpdateSubProductsCosts();
-}
-
-$scope.DeleteSubProduct = function (productName) {
-    for (var i = 0; i < $scope.AlterProduct.FinalCartProducts.length; i++) {
-        if ($scope.AlterProduct.FinalCartProducts[i].Name == productName){
+        if ($scope.AlterProduct.FinalCartProducts[i].ID == ID){
             $scope.AlterProduct.FinalCartProducts.splice(i,1);
             break;
         }

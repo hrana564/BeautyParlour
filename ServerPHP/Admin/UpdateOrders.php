@@ -8,12 +8,13 @@ $ID = $_POST['ID'];
 $Name  = $_POST['Name'];
 $Mobile  = $_POST['Mobile'];
 $Email = $_POST['Email'];
-$DateOfDelivery  = $_POST['DateOfDelivery'];
+$DateOfService  = $_POST['DateOfService'];
+$TimeOfService  = $_POST['TimeOfService'];
 $Address = $_POST['Address'];
 $TotalCost  = $_POST['TotalCost'];
 $DiscountPercentage  = $_POST['DiscountPercentage'];
 $FinalCost = $_POST['FinalCost'];
-$IsDelivered  = $_POST['IsDelivered'];
+$IsServicePerformed  = $_POST['IsServicePerformed'];
 $Comments  = $_POST['Comments'];
 $IsActive  = $_POST['IsActive'];
 $Token = $_POST['Token'];
@@ -24,7 +25,7 @@ if($IsAuthenticated  != 1){
 	exit();
 }
 
-$sql = "Update `orders` set `Name`='$Name', `Mobile`='$Mobile', `Email`='$Email', `DateOfDelivery`='$DateOfDelivery', `Address`='$Address', `TotalCost`=$TotalCost, `DiscountPercentage`=$DiscountPercentage, `FinalCost`=$FinalCost, `IsDelivered`=$IsDelivered, `Comments`='$Comments', `IsActive`=$IsActive, `LastUpdatedOn`=NOW() where `ID`=$ID";
+$sql = "Update `orders` set `Name`='$Name', `Mobile`='$Mobile', `Email`='$Email', `DateOfService`='$DateOfService', `TimeOfService`='$TimeOfService', `Address`='$Address', `TotalCost`=$TotalCost, `DiscountPercentage`=$DiscountPercentage, `FinalCost`=$FinalCost, `IsServicePerformed`=$IsServicePerformed, `Comments`='$Comments', `IsActive`=$IsActive, `LastUpdatedOn`=NOW() where `ID`=$ID";
 
 $result = mysqli_query($conn, $sql);
 if ($result===True) {
