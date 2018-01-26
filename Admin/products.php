@@ -89,7 +89,9 @@
 
 </style>
 
-<script type="text/javascript" src="../scripts/angular.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-touch.min.js"></script>
+
 <script type="text/javascript" src="../scripts/Product_Model.js"></script>
 <script type="text/javascript" src="../scripts/AngularGrid_Utility.js"></script>
 <script type="text/javascript" src="../scripts/Aproducts.js"></script>
@@ -102,36 +104,31 @@
     <div class="container">
       <div style="overflow:auto; width: 80%">
         <div style="float:left;">
-          <a class="navbar-brand" href="./index.html">Rana Sweets & Farsan - Admin Panel</a>
+          <a class="navbar-brand" href="./index.html">Test Beauty Parlour</a>
         </div>
-          <!-- <div style="float:right;">
-            <a href="./cart.html" style="float: right;font-weight: bold;font-size: 30px;color: #B8860B;">{{CartProducts.length==0?'':CartProducts.length}}🛒</a>
-          </div> -->
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
-            <li class="dropdown  nav-item active">
-              <a href="#" class="nav-link" data-toggle="dropdown" style="width: 120%">Master &#8615;</a>
+            <li class="dropdown">
+              <a href="#" class="nav-link" data-toggle="dropdown" style="width: 120%">Manage &#8615;</a>
               <ul class="dropdown-menu" style="background-color: #343a40!important">
-                <li ><a class="nav-link" href="./categories.html">Categories</a></li>
-                <li ><a class="nav-link" href="./products.html">Products</a></li>
-                <!-- <li ><a class="nav-link" href="./Others.html">Others</a></li> -->
+                <li ><a class="nav-link" href="./categories.html">Products</a></li>
+                <li ><a class="nav-link" href="./faqs.html">FAQs</a></li>
               </ul>
             </li>
-            <li class="dropdown"> 
+            <li class="dropdown nav-item active"> 
               <a href="#" class="nav-link" data-toggle="dropdown" style="width: 120%">Orders &#8615;</a>
               <ul class="dropdown-menu" style="background-color: #343a40!important">
                 <li ><a class="nav-link" href="./orders.html?Mode=1">All</a></li>
-                <li ><a class="nav-link" href="./orders.html?Mode=2">Un Delivered</a></li>
+                <li ><a class="nav-link" href="./orders.html?Mode=2">Un Serviced</a></li>
                 <li ><a class="nav-link" href="./orders.html?Mode=3">Danger</a></li>
-                <li ><a class="nav-link" href="./orders.html?Mode=4">Delivered</a></li>
-                <!-- <li ><a class="nav-link" href="./Others.html">Others</a></li> -->
+                <li ><a class="nav-link" href="./orders.html?Mode=4">Serviced</a></li>
               </ul>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" style="cursor: pointer;">
               <a class="nav-link" ng-click="Logout()">Logout</a>
             </li>
           </ul>
@@ -141,6 +138,85 @@
     <!-- Page Content -->
     <br />
     <div class="container" >
+      <div class="row">
+      <?php
+          require_once '../ServerPHP/Utils/DBConfig.php';
+          require_once '../ServerPHP/Utils/PHPFunctions.php';
+          if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $Token = $_POST['Token'];
+
+              $IsAuthenticated = ValidateToken($Token,$conn);
+              if($IsAuthenticated  != 1){
+                echo "<script type=\"text/javascript\">window.location = window.location.origin+'/Admin/index.html';</script>";
+                exit();
+              }
+          }
+
+          parse_str($_SERVER['QUERY_STRING']);
+
+          $target_dir = $_SERVER['DOCUMENT_ROOT']."images/Categories/";
+          if(isset($_FILES['image'])){
+            $errors= array();
+            $file_name = $_FILES['image']['name'];
+            $file_size =$_FILES['image']['size'];
+            $file_tmp =$_FILES['image']['tmp_name'];
+            $file_type=$_FILES['image']['type'];
+            $tmp = explode('.', $file_name);
+            $file_ext=strtolower(end($tmp));
+            $NewFileName =generateRandomString(26) . ".".$file_ext;
+
+            $expensions= array("jpeg","jpg","png");
+
+            if(in_array($file_ext,$expensions)=== false){
+              $errors[]="extension not allowed, please choose a JPEG or PNG file.";
+            }
+
+            if($file_size > 1097152){
+              $errors[]='File size must be less than 1 MB';
+            }
+
+            if(empty($errors)==true){
+              move_uploaded_file($file_tmp,$target_dir.$NewFileName);
+            }else{
+              $errors[]='Internal error occured while moving image';
+            }
+            $sql = "update `categories` set `PhotoURL`='$NewFileName' where `ID`=$CategoryID";
+            $result = mysqli_query($conn, $sql);
+            if ($result===True) {
+              echo "<div class=\"col-md-12\"><div class=\"alert alert-success\"><strong>Success!</strong> Image updated successfully.</div></div>";
+            } else {
+              $errors[] = 'Error occured while registering image to database';
+                print_r($errors);
+            }
+          }
+
+          $sql = "Select`Name` ,`PhotoURL` FROM `categories` where `ID`=$CategoryID";
+          $result = mysqli_query($conn, $sql);
+          while($row = mysqli_fetch_array($result)) {
+            $PhotoURL = $row["PhotoURL"];
+            $CategoryName = $row["Name"];
+          }
+
+          if($PhotoURL == "" || $PhotoURL == NULL){
+            $PhotoURL = "default.png";
+          }
+          echo "<div class=\"col-md-12\"><h1 style=\"text-align:center;\">$CategoryName</h1></div>";
+          echo "<div class=\"col-md-4\" ><div style=\"width: 250px; height: 150px;\"><img src=\"/images/Categories/$PhotoURL\" style=\"width: 100%; height: 100%\"></div></div>" ;
+
+          ?>
+
+             <form action="#" method="POST" enctype="multipart/form-data">
+                <input type="file" name="image" />
+                <input type="hidden" name="Token" value="" id="Token">
+                <input type="submit"/>
+             </form>
+        <script type="text/javascript">
+          if((typeof localStorage.getItem('BeautyParloursAT') == "string" &&  localStorage.getItem('BeautyParloursAT') != "undefined" ? localStorage.getItem('BeautyParloursAT') : "").length !=100){
+            window.location = window.location.origin+'/Admin/index.html';
+          }
+          document.getElementById("Token").value = typeof localStorage.getItem('BeautyParloursAT') == "string" &&  localStorage.getItem('BeautyParloursAT') != "undefined" ? localStorage.getItem('BeautyParloursAT') : "";
+        </script>
+      </div>
       <div class="row">
         <div class="col-lg-6">
           Show <select ng-model="PageSize" ng-change="loadGrid(1)">
@@ -175,22 +251,6 @@
                 <span class="sortorder" ng-show="propertyName === 'Price'" ng-class="{reverse: reverse}"></span>
               </th>
               <th>
-                <a style=" cursor: pointer" ng-click="sortBy('Description')">Description</a>
-                <span class="sortorder" ng-show="propertyName === 'Description'" ng-class="{reverse: reverse}"></span>
-              </th>
-              <th>
-                <a style=" cursor: pointer" ng-click="sortBy('Category')">Category</a>
-                <span class="sortorder" ng-show="propertyName === 'Category'" ng-class="{reverse: reverse}"></span>
-              </th>
-              <th>
-                <a style=" cursor: pointer" ng-click="sortBy('InStock')">InStock</a>
-                <span class="sortorder" ng-show="propertyName === 'InStock'" ng-class="{reverse: reverse}"></span>
-              </th>
-              <th>
-                <a style=" cursor: pointer" ng-click="sortBy('PhotoURL')">PhotoURL</a>
-                <span class="sortorder" ng-show="propertyName === 'PhotoURL'" ng-class="{reverse: reverse}"></span>
-              </th>
-              <th>
                 <a style=" cursor: pointer" ng-click="sortBy('IsActive')">IsActive</a>
                 <span class="sortorder" ng-show="propertyName === 'IsActive'" ng-class="{reverse: reverse}"></span>
               </th>
@@ -214,10 +274,6 @@
             <tr ng-repeat="singleProduct in BindGrid | orderBy:propertyName:reverse | filter : search">
               <td>{{singleProduct.Name}}</td>
               <td>{{singleProduct.Price}}</td>
-              <td>{{singleProduct.Description}}</td>
-              <td>{{singleProduct.Category}}</td>
-              <td>{{singleProduct.InStock==1?'YES':'NO'}}</td>
-              <td><a href="/ServerPHP/Admin/ProductImage.php?OrderID={{singleProduct.ID}}" target="_blank">View</a></td>
               <td>{{singleProduct.IsActive==1?'YES':'NO'}}</td>
               <td>{{singleProduct.CreatedOn}}</td>
               <td>{{singleProduct.LastUpdatedOn}}</td>
@@ -275,19 +331,6 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-6">
-              Description : <input type="text" ng-model="AlterProduct.Description">
-            </div>
-            <div class="col-md-6">
-              Category : <select ng-model="AlterProduct.Category" ng-options="x for x in Categories"></select>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              In Stock:
-              <input type="radio" ng-model="AlterProduct.InStock" value="1">YES
-              <input type="radio" ng-model="AlterProduct.InStock" value="0">NO
-            </div>
             <div class="col-md-6">
               In Active:
               <input type="radio" ng-model="AlterProduct.IsActive" value="1">YES

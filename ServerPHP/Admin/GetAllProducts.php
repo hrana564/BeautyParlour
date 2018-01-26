@@ -3,7 +3,7 @@
 require_once '../Utils/DBConfig.php';
 parse_str($_SERVER['QUERY_STRING']);
 
-$sql = "Call A_GetAllProducts ($PageIndex,$PageSize)";
+$sql = "Call A_GetAllProducts ($CategoryID,$PageIndex,$PageSize)";
 $data = array();
 $result = mysqli_query($conn, $sql);
 // Print the results of the query.

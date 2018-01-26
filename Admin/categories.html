@@ -13,7 +13,10 @@
   <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <!-- Custom styles for this template -->
     <link href="/css/shop-homepage.css" rel="stylesheet">
-  <script type="text/javascript" src="/scripts/angular.min.js"></script>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-touch.min.js"></script>
+
   <script type="text/javascript" src="/scripts/Category_Model.js"></script>
   <script type="text/javascript" src="/scripts/AngularGrid_Utility.js"></script>
   <script type="text/javascript" src="/scripts/Acategories.js"></script>
@@ -101,36 +104,31 @@
     <div class="container">
       <div style="overflow:auto; width: 80%">
         <div style="float:left;">
-          <a class="navbar-brand" href="./index.html">Rana Sweets & Farsan - Admin Panel</a>
+          <a class="navbar-brand" href="./index.html">Test Beauty Parlour</a>
         </div>
-          <!-- <div style="float:right;">
-            <a href="./cart.html" style="float: right;font-weight: bold;font-size: 30px;color: #B8860B;">{{CartProducts.length==0?'':CartProducts.length}}🛒</a>
-          </div> -->
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
-            <li class="dropdown  nav-item active">
-              <a href="#" class="nav-link" data-toggle="dropdown" style="width: 120%">Master &#8615;</a>
+            <li class="dropdown">
+              <a href="#" class="nav-link" data-toggle="dropdown" style="width: 120%">Manage &#8615;</a>
               <ul class="dropdown-menu" style="background-color: #343a40!important">
-                <li ><a class="nav-link" href="./categories.html">Categories</a></li>
-                <li ><a class="nav-link" href="./products.html">Products</a></li>
-                <!-- <li ><a class="nav-link" href="./Others.html">Others</a></li> -->
+                <li ><a class="nav-link" href="./categories.html">Products</a></li>
+                <li ><a class="nav-link" href="./faqs.html">FAQs</a></li>
               </ul>
             </li>
-            <li class="dropdown"> 
+            <li class="dropdown nav-item active"> 
               <a href="#" class="nav-link" data-toggle="dropdown" style="width: 120%">Orders &#8615;</a>
               <ul class="dropdown-menu" style="background-color: #343a40!important">
                 <li ><a class="nav-link" href="./orders.html?Mode=1">All</a></li>
-                <li ><a class="nav-link" href="./orders.html?Mode=2">Un Delivered</a></li>
+                <li ><a class="nav-link" href="./orders.html?Mode=2">Un Serviced</a></li>
                 <li ><a class="nav-link" href="./orders.html?Mode=3">Danger</a></li>
-                <li ><a class="nav-link" href="./orders.html?Mode=4">Delivered</a></li>
-                <!-- <li ><a class="nav-link" href="./Others.html">Others</a></li> -->
+                <li ><a class="nav-link" href="./orders.html?Mode=4">Serviced</a></li>
               </ul>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" style="cursor: pointer;">
               <a class="nav-link" ng-click="Logout()">Logout</a>
             </li>
           </ul>
@@ -170,6 +168,9 @@
                   <span class="sortorder" ng-show="propertyName === 'Name'" ng-class="{reverse: reverse}"></span>
                 </th>
                 <th>
+                  Manage Products
+                </th>
+                <th>
                   <a style=" cursor: pointer" ng-click="sortBy('IsActive')">IsActive</a>
                   <span class="sortorder" ng-show="propertyName === 'IsActive'" ng-class="{reverse: reverse}"></span>
                 </th>
@@ -192,6 +193,7 @@
             <tbody>
               <tr ng-repeat="singleCategory in BindGrid | orderBy:propertyName:reverse | filter : search">
                 <td>{{singleCategory.Name}}</td>
+                <td><a href="/Admin/products.php?CategoryID={{singleCategory.ID}}" target="_blank">Manage</a></td>
                 <td>{{singleCategory.IsActive==1?'YES':'NO'}}</td>
                 <td>{{singleCategory.CreatedOn}}</td>
                 <td>{{singleCategory.LastUpdatedOn}}</td>

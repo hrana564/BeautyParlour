@@ -13,11 +13,17 @@ if($IsAuthenticated  != 1){
 	exit();
 }
 
-$sql = "Delete from products where CategoryID = $ID;Delete from `categories` where `ID`=$ID";
+$sql = "Delete from `products` where `CategoryID` = $ID";
 
 $result = mysqli_query($conn, $sql);
 if ($result===True) {
-    echo "[{\"Result\":\"True\"}]";
+	$sql = "Delete from `categories` where `ID`=$ID";
+	$result = mysqli_query($conn, $sql);
+	if ($result===True) {
+    	echo "[{\"Result\":\"True\"}]";
+    } else {
+    	echo "[{\"Result\":\"False\"}]";
+    }
 } else {
     echo "[{\"Result\":\"False\"}]";
 }

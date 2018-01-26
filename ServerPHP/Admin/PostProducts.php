@@ -7,9 +7,7 @@ $_POST = json_decode($rest_json, true);
 $ID = $_POST['ID'];
 $Name  = $_POST['Name'];
 $Price = $_POST['Price'];
-$Description  = $_POST['Description'];
-$Category = $_POST['Category'];
-$InStock  = $_POST['InStock'];
+$CategoryID = $_POST['CategoryID'];
 $IsActive  = $_POST['IsActive'];
 $Token = $_POST['Token'];
 
@@ -20,9 +18,9 @@ if($IsAuthenticated  != 1){
 }
 
 if($ID ==""){
-	$sql = "INSERT INTO `products`(`Name`, `Description`, `Price`, `CategoryID`, `InStock`, `PhotoURL`, `IsActive`, `CreatedOn`, `LastUpdatedOn`) Select '$Name','$Description',$Price,(Select ID from categories where name ='$Category'),$InStock,'',$IsActive,NOW(),NOW()";
+	$sql = "INSERT INTO `products`(`Name`, `Price`, `CategoryID`, `IsActive`, `CreatedOn`, `LastUpdatedOn`) Select '$Name', $Price, $CategoryID,$IsActive,NOW(),NOW()";
 } else{
-	$sql = "Update `products` set `Name`='$Name', `Description`='$Description', `Price`=$Price, `CategoryID`=(Select ID from categories where name ='$Category'), `InStock`=$InStock, `IsActive`=$IsActive, `LastUpdatedOn`=NOW() where `ID`=$ID";
+	$sql = "Update `products` set `Name`='$Name', `Price`=$Price, `IsActive`=$IsActive, `LastUpdatedOn`=NOW() where `ID`=$ID";
 }
 
 $result = mysqli_query($conn, $sql);
